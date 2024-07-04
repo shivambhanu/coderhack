@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
 
-
-
 @RestController
 public class CoderhackController {
     
@@ -60,7 +58,7 @@ public class CoderhackController {
 
 
     // PUT /users/{userId} - Update the score of a specific user
-    @PutMapping("users/{userId}")
+    @PutMapping("/users/{userId}")
     public ResponseEntity<String> putUserScore(@PathVariable String userId, @RequestBody UserScoreDto userScoreDto) {
         
         boolean isUpdated = userService.updateUserScore(userId, userScoreDto.getScore());

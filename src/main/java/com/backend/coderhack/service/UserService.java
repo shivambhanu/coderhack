@@ -43,6 +43,7 @@ public class UserService {
 
         if(user != null){
             user.setScore(newScore);
+            user.updateBadge();
             userRepository.save(user);
             return true;
         }
