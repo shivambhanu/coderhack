@@ -1,5 +1,6 @@
 package com.backend.coderhack.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,19 +17,48 @@ public class UserService {
     private UserRepository userRepository;
 
     public List<User> getAllUsers(){
-        return userRepository.findAll();
+        List<User> userList = userRepository.findAll();
+        Collections.sort(userList);
+
+        return userList;
     }
 
     public User getUserById(String userId){
         Optional<User> user = userRepository.findById(userId);
-        return user.get();
+        if(user.isPresent())
+            return user.get();
+        else
+            return null;
     }
 
     
-    public User createUser(PostUserRequestDto postUserRequestDto){
+    public void createUser(PostUserRequestDto postUserRequestDto){
         User newUser = new User(postUserRequestDto.getUserName(), postUserRequestDto.getUserId());
-        User savedUser = userRepository.save(newUser);
-        return savedUser;
+        userRepository.save(newUser);
+    }
+
+
+    public boolean updateUserScore(String userId, Integer newScore){
+        User user = getUserById(userId);
+
+        if(user != null){
+            user.setScore(newScore);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+
+    public boolean deleteUser(String userId){
+        User user = getUserById(userId);
+
+        if(user != null){
+            userRepository.delete(user);
+            return true;
+        }else{
+            return false;
+        }
     }
 
 

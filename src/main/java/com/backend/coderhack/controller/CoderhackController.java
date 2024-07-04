@@ -3,6 +3,7 @@ package com.backend.coderhack.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.coderhack.dto.PostUserRequestDto;
+import com.backend.coderhack.dto.UserScoreDto;
 import com.backend.coderhack.model.User;
 import com.backend.coderhack.service.UserService;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +28,6 @@ public class CoderhackController {
     @Autowired
     private UserService userService;
     
-    // PUT /users/{userId} - Update the score of a specific user
-    // DELETE /users/{userId} - Deregister a specific user from the contest
 
     // GET /users - Retrieve a list of all registered users
     @GetMapping("/users")
@@ -49,20 +49,40 @@ public class CoderhackController {
     
     // POST /users - Register a new user to the contest
     @PostMapping("/users")
-    public ResponseEntity<User> postUser(@RequestBody PostUserRequestDto postUserRequestDto) {
+    public ResponseEntity<String> postUser(@RequestBody PostUserRequestDto postUserRequestDto) {
         if(userService.userAlreadyExists(postUserRequestDto.getUserId())){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }else{
-            User user = userService.createUser(postUserRequestDto);
-            return ResponseEntity.ok().body(user);
+            userService.createUser(postUserRequestDto);
+            return ResponseEntity.ok("User registered successfully!");
         }
     }
 
 
+    // PUT /users/{userId} - Update the score of a specific user
     @PutMapping("users/{userId}")
-    public String putUserScore(@PathVariable String userId, @RequestBody UserScoreDto userScoreDto) {
+    public ResponseEntity<String> putUserScore(@PathVariable String userId, @RequestBody UserScoreDto userScoreDto) {
         
-        return entity;
+        boolean isUpdated = userService.updateUserScore(userId, userScoreDto.getScore());
+        if(isUpdated)
+            return ResponseEntity.ok("User score updated successfully!");
+        else
+            return ResponseEntity.notFound().build();
     }
+
+
+
+    // DELETE /users/{userId} - Deregister a specific user from the contest
+    @DeleteMapping("users/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable String userId){
+        boolean isDeleted = userService.deleteUser(userId);
+
+        if(isDeleted){
+            return ResponseEntity.ok("User deleted successfully!");
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     
 }

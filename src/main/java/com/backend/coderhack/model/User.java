@@ -3,7 +3,7 @@ package com.backend.coderhack.model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class User {
+public class User implements Comparable<User> {
     private String userName;
     private Integer score;
     private String userId;
@@ -35,15 +35,20 @@ public class User {
 
 
     //setters
-    public void addScore(Integer score){
-        if(score > 0 && this.score + score <= 100){
-            this.score += score;
+    public void setScore(Integer newScore){
+        if(newScore > 0 && newScore <= 100){
+            score = newScore;
         }
     }
 
-    public void deductScore(Integer score){
-        if(score > 0 && this.score - score >= 0){
-            this.score -= score;
-        }
+
+    @Override
+    public int compareTo(User otherUser){
+        if(this.score < otherUser.score)
+            return 1;
+        else if(this.score > otherUser.getScore())
+            return -1;
+        else 
+            return 0;
     }
 }
