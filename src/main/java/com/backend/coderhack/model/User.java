@@ -5,6 +5,8 @@ import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.backend.coderhack.exceptions.InvalidScoreException;
+
 
 @Document(collection = "users")
 public class User implements Comparable<User> {
@@ -43,10 +45,11 @@ public class User implements Comparable<User> {
 
 
     //setters
-    public void setScore(Integer newScore){
+    public void setScore(Integer newScore) throws InvalidScoreException {
         if(newScore > 0 && newScore <= 100){
             score = newScore;
-        }
+        }else
+            throw new InvalidScoreException();
     }
 
     public void updateBadge(){
