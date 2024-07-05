@@ -2,7 +2,7 @@
 
 ## Postman Collection
 
-You can find the Postman Collection for this project [text](https://github.com/shivambhanu/coderhack/blob/main/CoderHack.postman_collection.json).
+You can find the Postman Collection for this project [here](https://github.com/shivambhanu/coderhack/blob/main/CoderHack.postman_collection.json).
 
 To import the collection into Postman:
 1. Click the "Import" button in Postman.
