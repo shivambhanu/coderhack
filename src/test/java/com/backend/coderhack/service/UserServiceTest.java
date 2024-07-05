@@ -8,22 +8,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.assertj.AssertableReactiveWebApplicationContext;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
 
 import com.backend.coderhack.repository.UserRepository;
 import com.backend.coderhack.dto.PostUserRequestDto;
@@ -83,19 +78,68 @@ public class UserServiceTest {
 
 
     @Test
-    @DisplayName("Testing to update user score")
-    public void testUpdateUserScore(){
+    @DisplayName("Testing to update user score and badge between 1 and 30")
+    public void testUpdateUserScoreAndBadgeUnderThirty(){
         User userOne = new User("Aman", "1");
-        User userTwo = new User("Rakesh", "2");
-        User userThree = new User("Robert", "3");
+        when(userRepository.findById("1")).thenReturn(Optional.ofNullable(userOne));
 
-        userService.updateUserScore(userOne.getUserId(), 20);
-        userService.updateUserScore(userTwo.getUserId(), 40);
-        userService.updateUserScore(userThree.getUserId(), 70);
-
+        Assertions.assertTrue(userService.updateUserScore(userOne.getUserId(), 20));
+        Assertions.assertEquals(new ArrayList<>(Arrays.asList("Code Ninja")), new ArrayList<>(userOne.getBadgeSet()));
+        
+        verify(userRepository, times(1)).findById(any(String.class));
         verify(userRepository, times(1)).save(any(User.class));
     }
 
 
-    
+    @Test
+    @DisplayName("Testing to update user score and badge between 30 and 60")
+    public void testUpdateUserScoreAndBadgeUnderSixty(){
+        User userOne = new User("Aman", "1");
+        when(userRepository.findById("1")).thenReturn(Optional.ofNullable(userOne));
+
+        Assertions.assertTrue(userService.updateUserScore(userOne.getUserId(), 40));
+        Assertions.assertEquals(new ArrayList<>(Arrays.asList("Code Ninja", "Code Champ")), new ArrayList<>(userOne.getBadgeSet()));
+        
+        verify(userRepository, times(1)).findById(any(String.class));
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+
+    @Test
+    @DisplayName("Testing to update user score and badge between 60 and 100")
+    public void testUpdateUserScoreAndBadgeUnderHundred(){
+        User userOne = new User("Aman", "1");
+        when(userRepository.findById("1")).thenReturn(Optional.ofNullable(userOne));
+
+        Assertions.assertTrue(userService.updateUserScore(userOne.getUserId(), 90));
+        Assertions.assertEquals(new ArrayList<>(Arrays.asList("Code Ninja", "Code Champ", "Code Master")), new ArrayList<>(userOne.getBadgeSet()));
+
+        verify(userRepository, times(1)).findById(any(String.class));
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+
+    @Test
+    @DisplayName("Testing to delete a specific user")
+    public void testDeleteUser(){
+        User userOne = new User("Aman", "1");
+        when(userRepository.findById("1")).thenReturn(Optional.ofNullable(userOne));
+
+        Assertions.assertTrue(userService.deleteUser(userOne.getUserId()));
+
+        verify(userRepository, times(1)).findById(any(String.class));
+        verify(userRepository, times(1)).delete(any(User.class));
+    }
+
+
+    @Test
+    @DisplayName("Testing whether user already exists")
+    public void testUserAlreadyExistsOrNot(){
+        User userOne = new User("Aman", "1");
+        when(userRepository.existsById("1")).thenReturn(true);
+
+        Assertions.assertTrue(userService.userAlreadyExists(userOne.getUserId()));
+
+        verify(userRepository, times(1)).existsById(any(String.class));
+    }
 }
